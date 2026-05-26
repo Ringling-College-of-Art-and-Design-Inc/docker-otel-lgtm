@@ -14,4 +14,5 @@ run_with_logging "Prometheus ${PROMETHEUS_VERSION}" "${ENABLE_LOGS_PROMETHEUS:-f
 	--enable-feature=exemplar-storage \
 	--storage.tsdb.path=/data/prometheus \
 	--config.file=./prometheus.yaml \
+	--storage.tsdb.retention.time=1y \
 	"${extra_args[@]}"
