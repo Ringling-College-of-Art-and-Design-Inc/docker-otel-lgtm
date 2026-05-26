@@ -1,36 +1,46 @@
 # pin all versions to avoid GitHub rate limit
 [tools]
-go = "1.26.1"
+bats = "1.13.0"
+dotnet = "10.0.202"
+go = "1.26.3"
 "go:github.com/grafana/oats" = "0.6.1"
-java = "temurin-25.0.2+10.0.LTS"
-lychee = "0.22.0"
-node = "24.14.0"
-"npm:renovate" = "43.59.2"
-rust = "1.94.0"
+java = "temurin-25.0.3+9.0.LTS"
+node = "24.15.0"
+rust = { version = "1.95.0", components = "clippy,rustfmt" }
+
+# Linters
+actionlint = "1.7.12"
+"aqua:grafana/flint" = "0.22.2"
+"aqua:jonwiggins/xmloxide" = "0.4.3"
+"aqua:owenlamont/ryl" = "0.9.1"
+biome = "2.4.13"
+editorconfig-checker = "3.6.1"
+golangci-lint = "2.12.2"
+google-java-format = "1.35.0"
+hadolint = "2.14.0"
+lychee = "0.24.2"
+"npm:renovate" = "43.150.0"
+ruff = "0.15.12"
+rumdl = "0.1.80"
+shellcheck = "0.11.0"
+shfmt = "3.13.1"
+taplo = "0.10.0"
+typos = "1.46.0"
 
 [env]
-RENOVATE_TRACKED_DEPS_EXCLUDE="github-actions,github-runners"
-# renovate: datasource=docker depName=ghcr.io/super-linter/super-linter
-SUPER_LINTER_VERSION="v8.4.0@sha256:c5e3307932203ff9e1e8acfe7e92e894add6266605b5d7fb525fb371a59a26f4"
+FLINT_CONFIG_DIR = ".github/config"
 
-# Shared lint tasks from flint (https://github.com/grafana/flint)
-[tasks."lint:super-linter"]
-description = "Run Super-Linter on the repository"
-file = "https://raw.githubusercontent.com/grafana/flint/0ac131d7832bd8964f6ca9e5af73207dca6a85ba/tasks/lint/super-linter.sh" # v0.7.1
-[tasks."lint:links"]
-description = "Check for broken links in changed files + all local links"
-file = "https://raw.githubusercontent.com/grafana/flint/0ac131d7832bd8964f6ca9e5af73207dca6a85ba/tasks/lint/links.sh" # v0.7.1
-[tasks."lint:renovate-deps"]
-description = "Verify renovate-tracked-deps.json is up to date"
-file = "https://raw.githubusercontent.com/grafana/flint/0ac131d7832bd8964f6ca9e5af73207dca6a85ba/tasks/lint/renovate-deps.py" # v0.7.1
+[tasks."test:unit"]
+description = "Run unit tests"
+run = "bats docker/run-otelcol.bats docker/run-all.bats"
 
-[tasks."lint"]
+[tasks."ci"]
+description = "Run all checks (lint + unit tests)"
+depends = ["lint", "test:unit"]
+
+[tasks.lint]
 description = "Run all lints"
-depends = ["lint:super-linter", "lint:links", "lint:renovate-deps"]
-
-[tasks.fix]
-description = "Auto-fix lint issues and regenerate tracked deps"
-run = "AUTOFIX=true mise run lint"
+run = "flint run"
 
 [tasks.lgtm]
 description = "Run LGTM image"
@@ -89,12 +99,16 @@ run = "kubectl apply -f k8s/lgtm.yaml"
 
 [tasks.k8s-port-forward]
 description = "Port-forward LGTM Kubernetes service"
-run = "kubectl port-forward service/lgtm 3000:3000 4040:4040 4317:4317 4318:4318 9090:9090"
+run = "kubectl port-forward service/lgtm 3000:3000 3200:3200 4040:4040 4317:4317 4318:4318 9090:9090"
 
 [tasks.build-lgtm]
 description = "Build LGTM image"
 usage = 'arg "<tag>" default="latest"'
 run = './build-lgtm.sh ${usage_tag}'
+
+[tasks."lint:fix"]
+description = "Auto-fix lint issues"
+run = "flint run --fix"
 
 [settings]
 # for go backend

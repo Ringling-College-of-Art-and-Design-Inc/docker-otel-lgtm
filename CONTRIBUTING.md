@@ -15,11 +15,11 @@ This repository uses [flint][flint] for linting.
 See the flint readme for detailed documentation on each linter.
 
 ```bash
-mise run fix   # Auto-fix all issues (recommended before committing)
+mise run lint:fix   # Auto-fix all issues (recommended before committing)
 mise run lint  # Check only (same command used in CI)
 ```
 
-Always run `mise run fix` before committing — review the changed files as auto-fixes may produce unexpected results.
+Always run `mise run lint:fix` before committing — review the changed files as auto-fixes may produce unexpected results.
 
 ## Acceptance Tests
 
@@ -50,9 +50,6 @@ Take a screenshot of the slide and save it as `img/overview.png`.
 ./otelcol-contrib --config docker/otelcol-config.yaml --config docker/otelcol-export-http.yaml \
 print-initial-config --feature-gates otelcol.printInitialConfig > merged.yaml
 ```
-
-<!-- editorconfig-checker-disable -->
-<!-- markdownlint-disable MD013 -->
 
 [architecture]: https://docs.google.com/presentation/d/1txMBBitezscvtJIXRHNSXnCekjMRM29GmHufUSI0NRw/edit?slide=id.g26040f0db78_0_0#slide=id.g26040f0db78_0_0
 [flint]: https://github.com/grafana/flint

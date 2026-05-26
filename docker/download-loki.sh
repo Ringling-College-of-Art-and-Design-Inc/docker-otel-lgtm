@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -euo pipefail
 
@@ -7,6 +7,10 @@ if [[ -z "${VERSION}" ]]; then
 	echo "Usage: $0 <version>"
 	exit 1
 fi
+
+# shellcheck disable=SC1091 # Flint 0.20.3 runs ShellCheck without source following.
+source ./common.sh
+source_sibling detect-arch.sh
 
 ARCHIVE=loki-linux-"${TARGETARCH}".zip
 curl -sOL https://github.com/grafana/loki/releases/download/"${VERSION}"/SHA256SUMS
